@@ -1,0 +1,29 @@
+{
+  "songs": {
+    "song1": {
+      "artist": "Martin Garrix",
+      "duration": "3:38",
+      "title": "Burn Out"
+    },
+    "song2": {
+      "artist": "Alan Walker",
+      "duration": "3:50",
+      "title": "Ignite"
+    },
+    "song3": {
+      "artist": "Sia",
+      "duration": "3:46",
+      "title": "Audio"
+    },
+    "song4": {
+      "artist": "MO",
+      "duration": "2:44",
+      "title": "Cold Water"
+    },
+    "song5": {
+      "artist": "Zara Larsson",
+      "duration": "3:16",
+      "title": "Ain't my fault"
+    }
+  }
+}

@@ -11,13 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  audioplayers: 6.1.0
 
   cupertino_icons: ^1.0.2
   flutter_svg:
   flutter_bloc:
   hydrated_bloc:
-  path_provider:
+  path_provider: ^2.1.5
   firebase_core:
   firebase_auth:
   get_it:
@@ -39,7 +39,8 @@ flutter:
     - assets/fonts/
     - assets/images/
     - assets/vectors/
-
+    - assets/musics/
+    - assets/data/songs.json
   fonts:
     - family: Satoshi
       fonts:

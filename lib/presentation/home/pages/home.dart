@@ -1,14 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:spotify/common/helpers/is_dark_mode.dart';
-import 'package:spotify/core/configs/assets/app_images.dart';
-import 'package:spotify/core/configs/theme/app_colors.dart';
-import 'package:spotify/presentation/home/widgets/news_songs.dart';
-import 'package:spotify/presentation/home/widgets/play_list.dart';
-import 'package:spotify/presentation/profile/pages/profile.dart';
-
-import '../../../common/widgets/appbar/app_bar.dart';
-import '../../../core/configs/assets/app_vectors.dart';
+import 'package:flutter/services.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,131 +10,69 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  
+class _HomePageState extends State<HomePage> {
+  List<Map<String, String>> _songs = [];
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _loadMusicFiles();
   }
-  
+
+  Future<void> _loadMusicFiles() async {
+    try {
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+      final musicFiles = manifestMap.keys
+          .where((String key) => key.contains('assets/musics/') && key.endsWith('.mp3'))
+          .toList();
+
+      setState(() {
+        _songs = musicFiles.map((path) {
+          final fileName = path.split('/').last;
+          final title = fileName.replaceAll('.mp3', '');
+          // Loại bỏ "assets/" từ đường dẫn
+          final assetPath = path.replaceFirst('assets/', '');
+          return {
+            "title": title,
+            "filePath": assetPath,
+          };
+        }).toList();
+      });
+    } catch (e) {
+      debugPrint("Error loading music files: $e");
+    }
+  }
+
+  void _playSong(String filePath) async {
+    String assetPath = filePath.replaceFirst('assets/', '');
+    await _audioPlayer.play(AssetSource(filePath));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: BasicAppbar(
-        hideBack: true,
-        action: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) => const ProfilePage())
-            );
-          },
-          icon: const Icon(
-            Icons.person
-          )
-        ),
-        title: SvgPicture.asset(
-          AppVectors.logo,
-          height: 40,
-          width: 40,
-        ),
+      appBar: AppBar(
+        title: const Text("Music Player"),
+        backgroundColor: Colors.purple,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _homeTopCard(),
-            _tabs(),
-            SizedBox(
-              height: 260,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  const NewsSongs(),
-                  Container(),
-                  Container(),
-                  Container()
-                ],
-              ),
+      body: _songs.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        itemCount: _songs.length,
+        itemBuilder: (context, index) {
+          final song = _songs[index];
+          return ListTile(
+            title: Text(song['title']!),
+            trailing: IconButton(
+              icon: const Icon(Icons.play_arrow),
+              onPressed: () => _playSong(song['filePath']!),
             ),
-            const PlayList()
-          ],
-        ),
+          );
+        },
       ),
-    );
-  }
-
-  Widget _homeTopCard(){
-    return Center(
-      child: SizedBox(
-        height: 140,
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SvgPicture.asset(
-                AppVectors.homeTopCard
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  right: 60
-                ),
-                child: Image.asset(
-                  AppImages.homeArtist
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tabs() {
-    return TabBar(
-      controller: _tabController,
-      isScrollable: true,
-      labelColor: context.isDarkMode ? Colors.white : Colors.black,
-      indicatorColor: AppColors.primary,
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 16
-      ),
-      tabs: const [
-        Text(
-          'News',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16
-          ),
-        ),
-        Text(
-          'Videos',
-           style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16
-          ),
-        ),
-        Text(
-          'Artists',
-           style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16
-          ),
-        ),
-        Text(
-          'Podcasts',
-           style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16
-          ),
-        )
-      ],
     );
   }
 }
