@@ -18,36 +18,36 @@ class _SplashPageState extends State<SplashPage> {
     redirect();
   }
 
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Align(
-        alignment: Alignment(10, 0),
-        child: SvgPicture.asset(
-          AppVectors.logo,
-          colorFilter: const ColorFilter.mode(
-            Colors.green, 
-            BlendMode.srcIn
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Align(
+          alignment: Alignment(10, 0),
+          child: SvgPicture.asset(
+            AppVectors.logo,
+            colorFilter: const ColorFilter.mode(
+                Colors.green,
+                BlendMode.srcIn
+            ),
+            width: 150,
+            height: 150,
           ),
-          width: 150,
-          height: 150,
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 
 
   Future<void> redirect() async {
     await Future.delayed(const Duration(seconds: 2));
     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => const GetStartedPage()
-      )
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => const GetStartedPage()
+        )
     );
   }
 }
