@@ -41,46 +41,54 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDwxQPdGbSiD5dcVGh88R23lGMImKCxtKs',
-    appId: '1:426509858399:web:4b4738cef4e35016264dea',
-    messagingSenderId: '426509858399',
-    projectId: 'spotify0101',
-    authDomain: 'spotify0101.firebaseapp.com',
-    storageBucket: 'spotify0101.appspot.com',
+    apiKey: 'AIzaSyCSfGr59GPXpG4ogLrDUlew4lNjj2xtmok',
+    appId: '1:362909099747:web:0f33bd8aa49866842b47d6',
+    messagingSenderId: '362909099747',
+    projectId: 'music-25c43',
+    authDomain: 'music-25c43.firebaseapp.com',
+    databaseURL: 'https://music-25c43-default-rtdb.firebaseio.com',
+    storageBucket: 'music-25c43.firebasestorage.app',
+    measurementId: 'G-C5T2GZ0083',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAwAF_v-n8bHO0Nrf_x0VvqALRxIN436OM',
-    appId: '1:426509858399:android:a9f0dd91f4d88cb2264dea',
-    messagingSenderId: '426509858399',
-    projectId: 'spotify0101',
-    storageBucket: 'spotify0101.appspot.com',
+    apiKey: 'AIzaSyCuStin5gsy0ouGTO0bF0ltWQmc0sIEZSg',
+    appId: '1:362909099747:android:ced68fbbb73651962b47d6',
+    messagingSenderId: '362909099747',
+    projectId: 'music-25c43',
+    databaseURL: 'https://music-25c43-default-rtdb.firebaseio.com',
+    storageBucket: 'music-25c43.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBumD8nn8O9ISMsaxhBT-duBGi1YSZAsSk',
-    appId: '1:426509858399:ios:78d9d14dc192a583264dea',
-    messagingSenderId: '426509858399',
-    projectId: 'spotify0101',
-    storageBucket: 'spotify0101.appspot.com',
+    apiKey: 'AIzaSyDdi9Cyj1zHwWw57m_sBY9-OMQciXjFY84',
+    appId: '1:362909099747:ios:7cb4fbacb96aee6b2b47d6',
+    messagingSenderId: '362909099747',
+    projectId: 'music-25c43',
+    databaseURL: 'https://music-25c43-default-rtdb.firebaseio.com',
+    storageBucket: 'music-25c43.firebasestorage.app',
     iosBundleId: 'com.example.spotify',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBumD8nn8O9ISMsaxhBT-duBGi1YSZAsSk',
-    appId: '1:426509858399:ios:78d9d14dc192a583264dea',
-    messagingSenderId: '426509858399',
-    projectId: 'spotify0101',
-    storageBucket: 'spotify0101.appspot.com',
+    apiKey: 'AIzaSyDdi9Cyj1zHwWw57m_sBY9-OMQciXjFY84',
+    appId: '1:362909099747:ios:7cb4fbacb96aee6b2b47d6',
+    messagingSenderId: '362909099747',
+    projectId: 'music-25c43',
+    databaseURL: 'https://music-25c43-default-rtdb.firebaseio.com',
+    storageBucket: 'music-25c43.firebasestorage.app',
     iosBundleId: 'com.example.spotify',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDwxQPdGbSiD5dcVGh88R23lGMImKCxtKs',
-    appId: '1:426509858399:web:7367e344006c4003264dea',
-    messagingSenderId: '426509858399',
-    projectId: 'spotify0101',
-    authDomain: 'spotify0101.firebaseapp.com',
-    storageBucket: 'spotify0101.appspot.com',
+    apiKey: 'AIzaSyCSfGr59GPXpG4ogLrDUlew4lNjj2xtmok',
+    appId: '1:362909099747:web:225c78ebe572ab282b47d6',
+    messagingSenderId: '362909099747',
+    projectId: 'music-25c43',
+    authDomain: 'music-25c43.firebaseapp.com',
+    databaseURL: 'https://music-25c43-default-rtdb.firebaseio.com',
+    storageBucket: 'music-25c43.firebasestorage.app',
+    measurementId: 'G-TS0PZXSPGX',
   );
+
 }
