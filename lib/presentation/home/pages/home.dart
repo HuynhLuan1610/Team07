@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:video_player/video_player.dart';  // Import video_player package
 import 'package:spotify/common/helpers/is_dark_mode.dart';
 import 'package:spotify/core/configs/assets/app_images.dart';
 import 'package:spotify/core/configs/theme/app_colors.dart';
@@ -30,6 +31,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Duration _totalDuration = Duration.zero;  // Thời gian tổng của bài hát
 
   int? _currentSongIndex;  // Chỉ số bài hát đang phát
+  VideoPlayerController? _videoPlayerController;  // Video player controller
+  bool _isVideoPlaying = false;  // Trạng thái phát video
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
   }
 
+  // Hàm load các file nhạc
   Future<void> _loadMusicFiles() async {
     try {
       final manifestContent = await rootBundle.loadString('AssetManifest.json');
@@ -75,6 +79,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     } catch (e) {
       debugPrint("Error loading music files: $e");
     }
+  }
+
+  // Hàm phát video từ thư mục assets/videos
+  Future<void> _playVideo(String assetPath) async {
+    _videoPlayerController = VideoPlayerController.asset(assetPath)
+      ..initialize().then((_) {
+        setState(() {
+          _isVideoPlaying = true;
+        });
+        _videoPlayerController?.play();
+      });
+  }
+
+  // Hàm dừng video
+  void _stopVideo() {
+    setState(() {
+      _isVideoPlaying = false;
+    });
+    _videoPlayerController?.pause();
   }
 
   // Hàm để dừng bài hát hiện tại và phát bài mới
@@ -172,7 +195,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 controller: _tabController,
                 children: [
                   _buildMusicList(),
-                  Container(),
+                  _buildVideoTab(),  // Cập nhật tab videos để phát video
                   Container(),
                   Container(),
                 ],
@@ -186,6 +209,30 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  // Tab Video
+  Widget _buildVideoTab() {
+    return _isVideoPlaying
+        ? AspectRatio(
+      aspectRatio: 16 / 9,
+      child: VideoPlayer(_videoPlayerController!),
+    )
+        : Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Tap to play video", style: TextStyle(fontSize: 18)),
+          ElevatedButton(
+            onPressed: () {
+              _playVideo('assets/videos/sample_video.mp4');
+            },
+            child: Text("Play Video"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Tab Music List
   Widget _buildMusicList() {
     return _songs.isEmpty
         ? const Center(child: CircularProgressIndicator())
@@ -277,53 +324,97 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _buildMusicPlayerControls() {
     return Container(
       padding: const EdgeInsets.all(20),
-      color: Colors.green, // Đổi nền thành màu xanh lá cây
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green,
+        borderRadius: BorderRadius.circular(40),
+      ),
+      child: Column(
         children: [
-          IconButton(
-            icon: Icon(
-              _isShuffling ? Icons.shuffle : Icons.shuffle_outlined,
-              color: Colors.black, // Nút màu đen
-            ),
-            onPressed: _toggleShuffle,
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.skip_previous, // Thay đổi nút tua 5s thành nút Back
-              color: Colors.black,
-            ),
-            onPressed: _previousSong,
-          ),
-          IconButton(
-            icon: Icon(
-              _isPlaying ? Icons.pause : Icons.play_arrow,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              if (_isPlaying) {
-                _stopSong();
-              } else {
-                _playSong(_currentSongIndex ?? 0); // Phát nhạc từ bài hát hiện tại
-              }
+          // Thanh Timeline
+          Slider(
+            value: _currentPosition.inSeconds.toDouble(),
+            min: 0.0,
+            max: _totalDuration.inSeconds.toDouble(),
+            onChanged: (double value) {
+              setState(() {
+                _audioPlayer.seek(Duration(seconds: value.toInt()));
+              });
             },
           ),
-          IconButton(
-            icon: Icon(
-              Icons.skip_next, // Thay đổi nút tua 5s thành nút Next
-              color: Colors.black,
-            ),
-            onPressed: _nextSong,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _formatDuration(_currentPosition),
+                style: TextStyle(color: Colors.black),
+              ),
+              Text(
+                _formatDuration(_totalDuration),
+                style: TextStyle(color: Colors.black),
+              ),
+            ],
           ),
-          IconButton(
-            icon: Icon(
-              _isLooping ? Icons.repeat_one : Icons.repeat,
-              color: Colors.black,
-            ),
-            onPressed: _toggleLoop,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(
+                  _isShuffling ? Icons.shuffle : Icons.shuffle_outlined,
+                  color: Colors.black,
+                ),
+                onPressed: _toggleShuffle,
+                iconSize: 24,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.skip_previous,
+                  color: Colors.black,
+                ),
+                onPressed: _previousSong,
+                iconSize: 24,
+              ),
+              IconButton(
+                icon: Icon(
+                  _isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  if (_isPlaying) {
+                    _stopSong();
+                  } else {
+                    _playSong(_currentSongIndex ?? 0);
+                  }
+                },
+                iconSize: 32,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.skip_next,
+                  color: Colors.black,
+                ),
+                onPressed: _nextSong,
+                iconSize: 24,
+              ),
+              IconButton(
+                icon: Icon(
+                  _isLooping ? Icons.repeat_one : Icons.repeat,
+                  color: Colors.black,
+                ),
+                onPressed: _toggleLoop,
+                iconSize: 24,
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
   }
 }
